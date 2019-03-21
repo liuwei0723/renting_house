@@ -1,6 +1,14 @@
 import React, { Component } from 'react'
 
-import { Input, Dimmer, Loader, Grid,Icon,Item,Button } from 'semantic-ui-react'
+import {
+  Input,
+  Dimmer,
+  Loader,
+  Grid,
+  Icon,
+  Item,
+  Button
+} from 'semantic-ui-react'
 
 import axios from 'axios'
 
@@ -8,6 +16,10 @@ import './Home.css'
 
 import ImageGallery from 'react-image-gallery'
 import 'react-image-gallery/styles/css/image-gallery.css'
+
+// 导入地图组件和计算器组件
+import Map from './Map.jsx'
+import Calc from './Calc.jsx'
 
 export default class Home extends Component {
   constructor() {
@@ -19,7 +31,9 @@ export default class Home extends Component {
       infos: [], //咨询
       faqs: [], //问答
       houses: [], //房屋列表
-      isLoading: true //正在加载中...
+      isLoading: true, //正在加载中...
+      isShowMap: false, //是否显示地图
+      isShowCalc: false //是否显示计算器
     }
   }
 
@@ -48,32 +62,43 @@ export default class Home extends Component {
     )
   }
 
-// 处理菜单的点击
-handleMenuClick = menuName => {
-  switch (menuName) {
-    case '二手房':
-      this.props.history.push('/list', { menuName, home_type: 1 })
-      break
-    case '新房':
-      this.props.history.push('/list', { menuName, home_type: 2 })
-      break
-    case '租房':
-      this.props.history.push('/list', { menuName, home_type: 3 })
-      break
-    case '海外':
-      this.props.history.push('/list', { menuName, home_type: 4 })
-      break
-    case '地图找房':
-    this.setState({isShowMap:true})
-      break
-
-    default:
-      break
+  // 处理菜单的点击
+  handleMenuClick = menuName => {
+    switch (menuName) {
+      case '二手房':
+        this.props.history.push('/list', { menuName, home_type: 1 })
+        break
+      case '新房':
+        this.props.history.push('/list', { menuName, home_type: 2 })
+        break
+      case '租房':
+        this.props.history.push('/list', { menuName, home_type: 3 })
+        break
+      case '海外':
+        this.props.history.push('/list', { menuName, home_type: 4 })
+        break
+      case '地图找房':
+        this.setState({ isShowMap: true })
+        break
+      case '计算器':
+        this.setState({ isShowCalc: true })
+        break
+      default:
+        break
+    }
   }
-}
 
   render() {
-    const { isLoading, swipers,menus,infos,faqs,houses } = this.state
+    const {
+      isShowCalc,
+      isShowMap,
+      isLoading,
+      swipers,
+      menus,
+      infos,
+      faqs,
+      houses
+    } = this.state
 
     // 菜单
     const Menus = props => (
@@ -160,7 +185,6 @@ handleMenuClick = menuName => {
         </ul>
       </div>
     )
-
 
     // 房屋列表
     const Houses = ({ houses }) => {
@@ -270,6 +294,21 @@ handleMenuClick = menuName => {
     }
     return (
       <div className="home-container">
+        {/* 0 根据条件渲染地图组件和计算器组件 */}
+        {isShowMap && (
+          <Map
+            hideMap={() => {
+              this.setState({ isShowMap: false })
+            }}
+          />
+        )}
+        {isShowCalc && (
+          <Calc
+            hideCalc={() => {
+              this.setState({ isShowCalc: false })
+            }}
+          />
+        )}
         {/* 1.0 搜索框 */}
         <div className="home-topbar">
           <Input
